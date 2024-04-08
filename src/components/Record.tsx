@@ -50,7 +50,7 @@ export const RecordScreen: React.FC = () => {
         <button
           onClick={startRecording}
           disabled={recording}
-          style={{ padding: "10px" }}
+          style={{ padding: "10px" }} 
         >
           Start Recording
         </button>
