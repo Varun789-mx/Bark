@@ -1,13 +1,11 @@
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 
 export function RecordScreen() {
     const [countdown, setcountdown] = useState(0);
     const [width, setWidth] = useState(window.innerWidth);
     const [height, setHeight] = useState(window.innerHeight);
 
-    useEffect(()=> {
-        const handleResize = 
-    },[])
+    useCallback()
 
     async function Recorder() {
         let mediaStream: MediaStream = await navigator.mediaDevices.getDisplayMedia({
