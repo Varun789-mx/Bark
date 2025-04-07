@@ -1,45 +1,66 @@
-let mediaRecorder: MediaRecorder | null = null;
-let recordedChunks: Blob[] = [];
+import { useState, useRef } from "react";
+export const RecordScreen: React.FC = () => {
+  let mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  let recordedChunksRef = useRef<Blob[]>([]);
+  const [recording, setRecording] = useState(false);
 
-export function RecordScreen() {
-    async function startCapture(): Promise<MediaStream> {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-            video: true,
-            audio: true,
-        })
-        recordedChunks = [];
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = (event: BlobEvent) => {
-            if (event.data.size > 0) {
-                recordedChunks.push(event.data);
-            }
-        };
-        mediaRecorder.onstop = () => {
-            const blob = new Blob(recordedChunks, { type: "video/webm" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "screen_recording.webm";
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }, 100);
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        audio: false,
+        video: true,
+      });
+      let mediaRecorder = new MediaRecorder(stream, {
+        mimeType: "video/webm codecs=vp9",
+      });
+      mediaRecorderRef.current = mediaRecorder;
+      recordedChunksRef.current = [];
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
         }
-        mediaRecorder.start();
-        return stream;
+      };
+      mediaRecorder.onstop = saveRecording;
+      mediaRecorder.start;
+      setRecording(true);
+    } catch (err) {
+      console.log("Error in starting recording", err);
     }
-    function stopCapture(stream: MediaStream) {
-        if (mediaRecorder && mediaRecorder.state !== "inactive") {
-            mediaRecorder.stop();
-        }
-        stream.getTracks().forEach((track) => track.stop());
-    }
+  }
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    setRecording(false);
+  };
+  const saveRecording = () => {
+    const blob = new Blob(recordedChunksRef.current, { type: "video/webm" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "${Date.now()}.webm";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
 
-    return <>
-        <button onClick={startCapture}>Record</button>
-        <button onClick={stopCapture}>Stop</button>
+  return (
+    <>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <button
+          onClick={startRecording}
+          disabled={recording}
+          style={{ padding: "10px" }}
+        >
+          Start Recording
+        </button>
+        <button
+          onClick={stopRecording}
+          disabled={!recording}
+          style={{ padding: "10px" }}
+        >
+          Stop Recording
+        </button>
+      </div>
     </>
-
-}
+  );
+};
