@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+
 export const RecordScreen: React.FC = () => {
   let mediaRecorderRef = useRef<MediaRecorder | null>(null);
   let recordedChunksRef = useRef<Blob[]>([]);
@@ -11,7 +12,7 @@ export const RecordScreen: React.FC = () => {
         video: true,
       });
       let mediaRecorder = new MediaRecorder(stream, {
-        mimeType: "video/webm codecs=vp9",
+        mimeType: "video/webm;codecs=vp9",
       });
       mediaRecorderRef.current = mediaRecorder;
       recordedChunksRef.current = [];
@@ -21,7 +22,7 @@ export const RecordScreen: React.FC = () => {
         }
       };
       mediaRecorder.onstop = saveRecording;
-      mediaRecorder.start;
+      mediaRecorder.start();
       setRecording(true);
     } catch (err) {
       console.log("Error in starting recording", err);
@@ -36,7 +37,7 @@ export const RecordScreen: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "${Date.now()}.webm";
+    a.download = `${Date.now()}.webm`;
     document.body.appendChild(a);
     a.click();
     a.remove();

@@ -35,7 +35,7 @@ const ScreenRecorder: React.FC = () => {
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
     setRecording(false);
-  };
+  };  
 
   const saveRecording = () => {
     const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });

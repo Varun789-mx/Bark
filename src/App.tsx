@@ -1,17 +1,14 @@
-
-import './App.css'
-import { RecordScreen } from './components/Record'
-import ScreenRecorder from './components/ScreenRecord'
+import "./App.css";
+import { RecordScreen } from "./components/Record";
+import ScreenRecorder from "./components/ScreenRecord";
 
 function App() {
-
   return (
     <>
-    <RecordScreen/>
-    <ScreenRecorder/>
+      <RecordScreen />
+      {/* <ScreenRecorder /> */}
     </>
-  )
+  );
 }
 
-
-export default App
+export default App;
