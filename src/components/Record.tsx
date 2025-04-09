@@ -1,26 +1,45 @@
-import { use, useCallback, useEffect, useState } from "react";
+let mediaRecorder: MediaRecorder | null = null;
+let recordedChunks: Blob[] = [];
 
 export function RecordScreen() {
-    const [countdown, setcountdown] = useState(0);
-    const [width, setWidth] = useState(window.innerWidth);
-    const [height, setHeight] = useState(window.innerHeight);
-
-    useCallback()
-
-    async function Recorder() {
-        let mediaStream: MediaStream = await navigator.mediaDevices.getDisplayMedia({
-            video: { frameRate: 60 },
+    async function startCapture(): Promise<MediaStream> {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+            video: true,
             audio: true,
-            selfBrowserSurface: 'include',
         })
-        let settings: MediaTrackSettings = mediaStream.getVideoTracks()[0].getSettings();
-
-        let videoEl: HTMLVideoElement
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = (event: BlobEvent) => {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+            }
+        };
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(recordedChunks, { type: "video/webm" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "screen_recording.webm";
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+        mediaRecorder.start();
+        return stream;
     }
-    return (
-        <>
-            <button type="submit" onClick={Recorder}>Record</button>
-        </>
-    )
-}
+    function stopCapture(stream: MediaStream) {
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+            mediaRecorder.stop();
+        }
+        stream.getTracks().forEach((track) => track.stop());
+    }
 
+    return <>
+        <button onClick={startCapture}>Record</button>
+        <button onClick={stopCapture}>Stop</button>
+    </>
+
+}
