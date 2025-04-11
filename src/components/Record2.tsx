@@ -1,4 +1,5 @@
 import { useRef, useState } from "react"
+import Recordicon from "../../public/player.png";
 
 export const Recorder2: React.FC = () => {
     let mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -46,9 +47,15 @@ export const Recorder2: React.FC = () => {
         URL.revokeObjectURL(url);
     }
     return (<>
-        <div>
-            <button onClick={StartRecording} disabled={recording}>Start Recording</button>
-            <button onClick={StopRecording} disabled={!recording}>Stop Recording</button>
+        <div className="w-full flex justify-center ">
+            <div className="bg-grey-300 p- w-2/3 rounded-4xl bg-black ">
+                <button onClick={StartRecording} className="bg-white text-white hover:border-1 rounded-4xl border-white"
+                    disabled={recording}><img className="w-5" src={Recordicon}/></button>
+
+                <button onClick={StopRecording}
+                    className="bg-blue-500 text-white p-2 border-1 border-white"
+                    disabled={!recording}>Stop Recording</button>
+            </div>
         </div>
     </>)
 }
