@@ -28,6 +28,8 @@ export const Recorder2: React.FC = () => {
             console.log('Error in recording', err);
         }
     }
+
+    
     const StopRecording = () => {
         if (mediaRecorderRef.current) {
             mediaRecorderRef.current?.stream.getTracks().forEach(track => track.stop());
@@ -50,7 +52,7 @@ export const Recorder2: React.FC = () => {
         <div className="w-full flex justify-center ">
             <div className="bg-grey-300 p- w-2/3 rounded-4xl bg-black ">
                 <button onClick={StartRecording} className="bg-white text-white hover:border-1 rounded-4xl border-white"
-                    disabled={recording}><img className="w-5" src={Recordicon}/></button>
+                    disabled={recording}><img className="w-5" src={Recordicon} /></button>
 
                 <button onClick={StopRecording}
                     className="bg-blue-500 text-white p-2 border-1 border-white"
